@@ -7,47 +7,36 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
-  const [authenticatedBooks, setAuthenticatedBooks] = useState([]);
+  const api = "http://127.0.0.1:3000";
 
   useEffect(() => {
     fetchBooks();
-    fetchAuthenticatedBooks();
   }, []);
 
   const fetchBooks = async () => {
     try {
-      const response = await axios.get("/api/books");
+      const response = await axios.get(`${api}/api/books`);
       setBooks(response.data);
     } catch (error) {
       console.error("Error fetching books:", error);
     }
   };
 
-  const fetchAuthenticatedBooks = async () => {
-    try {
-      const response = await axios.get("/api/books/secure", {
-        headers: { "x-api-key": process.env.REACT_APP_API_KEY },
-      });
-      setAuthenticatedBooks(response.data);
-    } catch (error) {
-      console.error("Error fetching authenticated books:", error);
-    }
-  };
-
   const searchBooks = async () => {
     try {
       const response = await axios.get(
-        `/api/books/search?query=${searchQuery}`
+        `${api}/api/books/search?query=${searchQuery}`
       );
       setBooks(response.data);
     } catch (error) {
       console.error("Error searching books:", error);
+      setBooks([]); // Clear books array on error
     }
   };
 
   const fetchBooksByPage = async (page) => {
     try {
-      const response = await axios.get(`/api/books?page=${page}`);
+      const response = await axios.get(`${api}/api/books/page/${page}`);
       setBooks(response.data);
     } catch (error) {
       console.error("Error fetching books by page:", error);
@@ -56,7 +45,7 @@ const App = () => {
 
   const fetchSortedBooks = async () => {
     try {
-      const response = await axios.get(`/api/books/sort?sortBy=${sortBy}`);
+      const response = await axios.get(`${api}/api/books?sortBy=${sortBy}`);
       setBooks(response.data);
     } catch (error) {
       console.error("Error fetching sorted books:", error);
@@ -134,21 +123,6 @@ const App = () => {
         </select>
         <button onClick={fetchSortedBooks}>Sort</button>
       </div>
-
-      {/* Authenticated Books */}
-      <h2>Authenticated Books</h2>
-      {authenticatedBooks.length === 0 ? (
-        <p className="no-results">No authenticated books found.</p>
-      ) : (
-        <ul className="book-list">
-          {authenticatedBooks.map((book) => (
-            <li key={book._id} className="book-item">
-              <h3 className="book-title">{book.title}</h3>
-              <p className="book-author">by {book.author}</p>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 };
