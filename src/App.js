@@ -7,7 +7,7 @@ const App = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState("");
-  const api = "http://127.0.0.1:3000";
+  const api = "https://library-api-zc2z.onrender.com";
 
   useEffect(() => {
     fetchBooks();
